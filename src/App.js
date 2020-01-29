@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Form from './Form';
+import List from './List';
+import todoService from './service/todos';
 
 function App() {
+  const [todos, setTodos] = useState([])
+  useEffect(() => {
+    todoService.getAll().then((res) => {
+      const todos = res.data
+      setTodos(todos)
+    })
+  }, [])
+  const addTodo = (value) => {
+    const newTodo = {
+      text: value
+    }
+    todoService.add(newTodo)
+      .then((res) => {
+        todoService.getAll().then((res) => {
+          setTodos(todos.concat(res.data))
+        })
+      })
+  }
+  const deleteTodo = (id) => {
+    todoService.remove(id)
+    .then((res) => {
+      todoService.getAll().then((res) => {
+        const todos = res.data
+        setTodos(todos)
+      })
+    })
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <Form addTodo={addTodo} />
+      <List todos={todos} deleteTodo={deleteTodo} />
+    </>
+  )
 }
+
 
 export default App;
