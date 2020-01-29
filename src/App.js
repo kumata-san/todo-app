@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import Form from './Form';
 import List from './List';
 import todoService from './service/todos';
